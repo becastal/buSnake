@@ -1,0 +1,42 @@
+/* Background Site index*/
+body {
+    /* Para inserir a imagem de fundo basta alterar a imagem abaixo: */
+    background-image: url(Images/kis.png);
+    background-size: cover;
+    color: white;
+    position: relative;
+}
+/* HEADER HEADER HEADER HEADER HEADER HEADER HEADER HEADER HEADER HEADER HEADER */
+#header{
+    display: flex;
+    justify-content: center;
+}
+#title{
+    font-size: 75px;
+    border: solid black 3px;
+    border-radius: 5px 50px 5px 5px;
+    padding: 10px;
+
+    background-image: url("Images/kis.png");
+    background-size: cover;
+    color: white;
+    position: relative;
+}
+/* OPCOES OPCOES OPCOES OPCOES OPCOES OPCOES OPCOES OPCOES OPCOES OPCOES OPCOES */
+#opcoes{
+    padding-top: 100px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+}
+
+a {
+    justify-self: center;
+    text-decoration: none;
+    color: dodgerblue;
+    font-size: 50px;
+    font-weight: bolder;
+
+    margin-top: 50px;
+}
