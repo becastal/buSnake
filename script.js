@@ -1,7 +1,8 @@
 const DIRECOES = { "norte": [-1, 0], "sul": [1, 0], "leste": [0, 1], "oeste": [0, -1] };
-const MAX_ALTURA = 16;
-const MAX_LARGURA = 16;
+const MAX_ALTURA = 10;
+const MAX_LARGURA = 10;
 const MAX_COMBUSTIVEL = 30;
+const VELOCIDADE = 1000;
 let mapa = [];
 let cabeca = [];
 let corpo = [];
@@ -11,8 +12,8 @@ let direcao = [];
 let filaPessoas = 0;
 let combustivel = 0;
 
-inicio();
-function inicio() 
+preProcesso();
+function preProcesso() 
 {
     for (let i = 0; i < MAX_ALTURA; i++)
     {
@@ -31,14 +32,22 @@ function inicio()
 
     atualizaMapa();
     printaMapa();
+    inicio();
+}
+
+function inicio() {
+    setTimeout(function () {
+        atualiza();
+        if (posicaoValida(cabeca)) {
+            inicio();
+        }
+    }, VELOCIDADE);
 }
 
 function atualiza() 
 {
     cabeca[0] += direcao[0], cabeca[1] += direcao[1];
     let posAnterior = [cabeca[0] - direcao[0], cabeca[1] - direcao[1]];
-    if (!posicaoValida(cabeca))
-        fimDeJogo();
     
     combustivel--;
     if (filaPessoas > 0)
@@ -92,7 +101,7 @@ function checaPessoa() {
         if (viz[0] < 0 || viz[1] < 0 || viz[0] >= MAX_ALTURA || viz[1] >= MAX_LARGURA) continue;
         if (mapa[viz[0]][viz[1]] == "p")
         {
-            filaPessoas++;
+            filaPessoas += 100;
             pessoa = novoRandom();
         }
     }
@@ -108,8 +117,9 @@ function checaGasolina() {
 }
 
 function figuraCorpo(i) {
+    
     if (i == corpo.length - 1) return "b";
-    return "#";
+    return("#");
 }
 
 function atualizaMapa()
@@ -139,6 +149,7 @@ function printaMapa()
     }    
     document.querySelector("#mapa").textContent = resp;
     document.querySelector("#tanque").textContent = `tanque: ${combustivel}`;
+    document.querySelector("#tamanho").textContent = `tamanho: ${corpo.length}`;
 }
 
 document.addEventListener("keydown", logKey);
@@ -148,5 +159,4 @@ function logKey(e) {
     if (e.code == "ArrowDown" || e.code == "KeyS") direcao = [1, 0];
     if (e.code == "ArrowRight" || e.code == "KeyD") direcao = [0, 1];
     if (e.code == "ArrowLeft" || e.code == "KeyA") direcao = [0, -1];
-    atualiza();
 }
