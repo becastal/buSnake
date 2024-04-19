@@ -1,6 +1,6 @@
 const MAX_ALTURA = 10;
 const MAX_LARGURA = 10;
-const MAX_PESSOAS = 5;
+const MAX_PESSOAS = 3;
 const MAX_GASOLINAS = 1;
 const MAX_COMBUSTIVEL = 80;
 const VELOCIDADE = 200;
@@ -15,6 +15,8 @@ let gasolinas = [];
 let direcao = [];
 let filaPessoas = 0;
 let combustivel = 0;
+let skin = "metro";
+
 
 document.addEventListener("keydown", logKey);
 
@@ -179,7 +181,6 @@ function removeDe(oque, onde) {
     for (par of onde)
         if (!(par[0] == oque[0] && par[1] == oque[1])) resp.push(par);
 
-    console.log(resp);
     return resp
 }
 
@@ -254,7 +255,6 @@ function printaMapa()
         resp += "\n";
     }
 
-    console.log(resp);
     document.querySelector("#mapa").textContent = resp;
     document.querySelector("#tanque").textContent = `tanque: ${combustivel}`;
     document.querySelector("#tamanho").textContent = `tamanho: ${corpo.length}`;
@@ -275,13 +275,6 @@ let desenhos = {
         ctx.closePath();
     },
 
-    anguloPelaDirecao: function (dir) {
-        if (dir[0] == 0)
-            if (dir[1] == 1) return 90; else return 270;
-        else
-            if (dir[0] == 1) return 180; else return 0;
-    },
-
     desenhaPessoa: function (i, j) {
         // TODO: randomizar a imagem das pessoas. acho que ter umas 10 possiveis configuracoes em imagens.
         let img = document.querySelector("#imagens #pessoas");
@@ -293,23 +286,70 @@ let desenhos = {
         ctx.drawImage(img, j * this.celulaLargura, i * this.celulaAltura, this.celulaLargura, this.celulaAltura);
     },
 
-    desenhaCorpo: function (i, j) {
-        // TODO: obviamente usar img definir a orientacao do corpo e usar css transform pra orientar a imagem. 
-        ctx.beginPath();
-        ctx.fillStyle = "gray";
-        ctx.fillRect(j * this.celulaLargura, i * this.celulaAltura, this.celulaLargura, this.celulaAltura);
-        ctx.closePath();
+    desenhaCabeca: function () {
+        let bunda = corpo[corpo.length - 1];
+        let anterior = [0, 0];
+        if (corpo.length == 1) 
+            anterior = cabeca;
+        else
+            anterior = corpo[corpo.length - 2];
+        
+        dir = [ bunda[0] - anterior[0] , bunda[1] - anterior[1] ]
+        let img = document.querySelector(`#imagens #cabeca${anguloPelaDirecao(dir)}`);
+        ctx.drawImage(img, bunda[1] * this.celulaLargura, bunda[0] * this.celulaAltura, this.celulaLargura, this.celulaAltura)
     },
 
-    desenhaCabeca: function () {
-        // TODO: canvas nao funciona com esse rotate do css. 
-        // TODO: acho que a resposta ta aqui https://www.dynamsoft.com/codepool/how-to-rotate-image-with-javascript.html mas quero dormir.
-        let img = document.querySelector("#imagens #cabeca");
-        img.style.transform = 'rotate(' + this.anguloPelaDirecao(direcao) + 'deg)'
-        let ni = document.querySelector("#imagens #cabeca");
-        ctx.drawImage(ni, cabeca[1] * this.celulaLargura, cabeca[0] * this.celulaAltura, this.celulaLargura, this.celulaAltura);
+    desenhaCorpo: function (i, j, idx) {
+        if (idx == corpo.length - 1) return;
+
+        let anterior = [0, 0];
+        if (idx == 0)
+            anterior = cabeca;
+        else
+            anterior = corpo[idx - 1];
+            
+        let posterior = corpo[idx + 1];
+
+        if (posterior[0] - anterior[0] == 0 || posterior[1] - anterior[1] == 0)
+        {
+            dir = [i - anterior[0] , j - anterior[1]]
+            let img = document.querySelector(`#imagens #corpo${anguloPelaDirecao(dir)}`);
+            ctx.drawImage(img, j * this.celulaLargura, i * this.celulaAltura, this.celulaLargura, this.celulaAltura)
+        }
+        else
+        {
+            dir = [posterior[0] - anterior[0] , posterior[1] - anterior[1]]
+            let angulo = 0;
+            console.log(dir);
+            if (dir[0] == 1 && dir[0] == -1) 
+                angulo = 0;
+            else if (dir[0] == -1 && dir[0] == 1) 
+                angulo = 90;
+            else if (dir[0] == -1 && dir[0] == -1) 
+                angulo = 180;
+            else if (dir[0] == 1 && dir[0] == 1) 
+                angulo = 270;
+
+            console.log(angulo)
+            let img = document.querySelector(`#imagens #dobra${angulo}`);
+            ctx.drawImage(img, j * this.celulaLargura, i * this.celulaAltura, this.celulaLargura, this.celulaAltura)            
+        }
+    },
+
+    desenhaBunda: function () {
+        let img = document.querySelector(`#imagens #cabeca${anguloPelaDirecao(direcao)}`);
+        ctx.drawImage(img, cabeca[1] * this.celulaLargura, cabeca[0] * this.celulaAltura, this.celulaLargura, this.celulaAltura)
     }
 }
+
+
+// daqui pra frente as funcoes relacionadas estao relacionadas com o funcionamento e visualizacao do canvas;
+function anguloPelaDirecao(dir) {
+    if (dir[0] == 0)
+        if (dir[1] == 1) return 90; else return 270;
+    else
+        if (dir[0] == 1) return 180; else return 0;
+}  
 
 function atualizaCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -323,9 +363,10 @@ function atualizaCanvas() {
     for (g of gasolinas)    
         desenhos.desenhaGasolina(g[0], g[1]);
 
-    for (c of corpo)
-        desenhos.desenhaCorpo(c[0], c[1]);
+    for (let i = 0; i < corpo.length; i++)
+        desenhos.desenhaCorpo(corpo[i][0], corpo[i][1], i);
 
+    desenhos.desenhaBunda();
     desenhos.desenhaCabeca();
     // TODO: alguma coisa pra manter controle do combustivel. seria legal uma barra na direia que diminui com o tempo.
 }
