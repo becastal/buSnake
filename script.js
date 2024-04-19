@@ -1,8 +1,7 @@
-const DIRECOES = { "norte": [-1, 0], "sul": [1, 0], "leste": [0, 1], "oeste": [0, -1] };
 const MAX_ALTURA = 10;
 const MAX_LARGURA = 10;
 const MAX_COMBUSTIVEL = 30;
-const VELOCIDADE = 1000;
+const VELOCIDADE = 500;
 let mapa = [];
 let cabeca = [];
 let corpo = [];
@@ -36,12 +35,22 @@ function preProcesso()
 }
 
 function inicio() {
-    setTimeout(function () {
+    setTimeout(function () 
+    {
         atualiza();
-        if (posicaoValida(cabeca)) {
+        if (posicaoValida(cabeca)) 
+        {
             inicio();
+        } 
+        else
+        {
+            fimDeJogo();
         }
     }, VELOCIDADE);
+}
+
+function fimDeJogo() {
+    window.alert("VOCE PERDEU")
 }
 
 function atualiza() 
@@ -101,7 +110,7 @@ function checaPessoa() {
         if (viz[0] < 0 || viz[1] < 0 || viz[0] >= MAX_ALTURA || viz[1] >= MAX_LARGURA) continue;
         if (mapa[viz[0]][viz[1]] == "p")
         {
-            filaPessoas += 100;
+            filaPessoas += 1;
             pessoa = novoRandom();
         }
     }
