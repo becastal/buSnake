@@ -265,31 +265,49 @@ let desenhos = {
     celulaLargura: canvas.width / MAX_LARGURA,
     
     desenhaFundo: function (i, j) {
+        // TODO: definir se so isso ta ok ou criar um cenario.
         ctx.beginPath();
         ctx.fillStyle = "white";
         ctx.fillRect(j * this.celulaLargura, i * this.celulaAltura, this.celulaLargura, this.celulaAltura);
+        ctx.lineWidth = 0.25;
         ctx.strokeStyle = "black";
         ctx.strokeRect(j * this.celulaLargura, i * this.celulaAltura, this.celulaLargura, this.celulaAltura);
         ctx.closePath();
     },
 
+    anguloPelaDirecao: function (dir) {
+        if (dir[0] == 0)
+            if (dir[1] == 1) return 90; else return 270;
+        else
+            if (dir[0] == 1) return 180; else return 0;
+    },
+
     desenhaPessoa: function (i, j) {
-        ctx.beginPath();
-        ctx.fillStyle = "black";
-        ctx.fillRect(j * this.celulaLargura, i * this.celulaAltura, this.celulaLargura, this.celulaAltura);
-        ctx.closePath();
+        // TODO: randomizar a imagem das pessoas. acho que ter umas 10 possiveis configuracoes em imagens.
+        let img = document.querySelector("#imagens #pessoas");
+        ctx.drawImage(img, j * this.celulaLargura, i * this.celulaAltura, this.celulaLargura, this.celulaAltura);
     },
 
     desenhaGasolina: function (i, j) {
         let img = document.querySelector("#imagens #gasolina");
-        ctx.drawImage(img, j * this.celulaLargura, i * this.celulaAltura);
+        ctx.drawImage(img, j * this.celulaLargura, i * this.celulaAltura, this.celulaLargura, this.celulaAltura);
     },
 
     desenhaCorpo: function (i, j) {
+        // TODO: obviamente usar img definir a orientacao do corpo e usar css transform pra orientar a imagem. 
         ctx.beginPath();
         ctx.fillStyle = "gray";
         ctx.fillRect(j * this.celulaLargura, i * this.celulaAltura, this.celulaLargura, this.celulaAltura);
         ctx.closePath();
+    },
+
+    desenhaCabeca: function () {
+        // TODO: canvas nao funciona com esse rotate do css. 
+        // TODO: acho que a resposta ta aqui https://www.dynamsoft.com/codepool/how-to-rotate-image-with-javascript.html mas quero dormir.
+        let img = document.querySelector("#imagens #cabeca");
+        img.style.transform = 'rotate(' + this.anguloPelaDirecao(direcao) + 'deg)'
+        let ni = document.querySelector("#imagens #cabeca");
+        ctx.drawImage(ni, cabeca[1] * this.celulaLargura, cabeca[0] * this.celulaAltura, this.celulaLargura, this.celulaAltura);
     }
 }
 
@@ -308,5 +326,6 @@ function atualizaCanvas() {
     for (c of corpo)
         desenhos.desenhaCorpo(c[0], c[1]);
 
-    desenhos.desenhaCorpo(cabeca[0], cabeca[1]);
+    desenhos.desenhaCabeca();
+    // TODO: alguma coisa pra manter controle do combustivel. seria legal uma barra na direia que diminui com o tempo.
 }
