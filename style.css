@@ -5,3 +5,11 @@
 #mapa {
     white-space: pre;
 }
+
+#jogo {
+    text-align: center;
+}
+
+#canvas {
+    border: 1px solid black;
+}
