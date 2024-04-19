@@ -57,8 +57,6 @@ function preProcesso()
     for (let i = 0; i < MAX_GASOLINAS; i++)
         gasolinas.push(novoRandom());
 
-    atualizaMapa();
-    printaMapa();
     rodar();
 }
 
@@ -100,8 +98,6 @@ function atualiza()
     
     checaPessoa();   // checa e consome pessoas. 
     checaGasolina(); // checa e consome gasolina.
-    atualizaMapa();  // atualiza valores do mapa (para visualizacao em texto)
-    printaMapa();    // imprime o mapa (para visualizacao em texto)
     atualizaCanvas();
 }
 
@@ -227,45 +223,11 @@ function figuraCorpo(i) {
     return("#");
 }
 
-function atualizaMapa()
-{
-    for (let i = 0; i < MAX_ALTURA; i++)
-        for (let j = 0; j < MAX_LARGURA; j++)
-            mapa[i][j] = ".";
-
-    for (let i = 0; i < corpo.length; i++)
-        mapa[corpo[i][0]][corpo[i][1]] = figuraCorpo(i);
-
-    for (p of pessoas)
-        mapa[p[0]][p[1]] = "p";
-
-    for (g of gasolinas)
-        mapa[g[0]][g[1]] = "g";
-    
-    mapa[cabeca[0]][cabeca[1]] = "@";
-}
-
-function printaMapa()
-{
-    let resp = "";
-    for (let i = 0; i < MAX_ALTURA; i++)
-    {
-        for (let j = 0; j < MAX_LARGURA; j++)
-            resp += mapa[i][j];
-        resp += "\n";
-    }
-
-    document.querySelector("#mapa").textContent = resp;
-    document.querySelector("#tanque").textContent = `tanque: ${combustivel}`;
-    document.querySelector("#tamanho").textContent = `tamanho: ${corpo.length}`;
-}
-
 let desenhos = {
     celulaAltura: canvas.height / MAX_ALTURA,
     celulaLargura: canvas.width / MAX_LARGURA,
     
     desenhaFundo: function (i, j) {
-        // TODO: definir se so isso ta ok ou criar um cenario.
         ctx.beginPath();
         ctx.fillStyle = "white";
         ctx.fillRect(j * this.celulaLargura, i * this.celulaAltura, this.celulaLargura, this.celulaAltura);
@@ -276,8 +238,8 @@ let desenhos = {
     },
 
     desenhaPessoa: function (i, j) {
-        // TODO: randomizar a imagem das pessoas. acho que ter umas 10 possiveis configuracoes em imagens.
-        let img = document.querySelector("#imagens #pessoas");
+        // TODO: gerador aleatorio de pessoas, mas que mantem elas constantes. sei la.
+        let img = document.querySelector(`#imagens #pessoas1`);
         ctx.drawImage(img, j * this.celulaLargura, i * this.celulaAltura, this.celulaLargura, this.celulaAltura);
     },
 
@@ -318,19 +280,20 @@ let desenhos = {
         }
         else
         {
-            dir = [posterior[0] - anterior[0] , posterior[1] - anterior[1]]
+            pos = [posterior[0] - i, posterior[1] - j];
+            ant = [anterior[0] - i, anterior[1] - j];
             let angulo = 0;
-            console.log(dir);
-            if (dir[0] == 1 && dir[0] == -1) 
-                angulo = 0;
-            else if (dir[0] == -1 && dir[0] == 1) 
-                angulo = 90;
-            else if (dir[0] == -1 && dir[0] == -1) 
-                angulo = 180;
-            else if (dir[0] == 1 && dir[0] == 1) 
-                angulo = 270;
+            if (estaContida([0, 1], [pos, ant]))
+                if (estaContida([1, 0], [pos, ant]))
+                    angulo = 270;
+                else
+                    angulo = 180;
+            else
+                if (estaContida([1, 0], [pos, ant]))
+                    angulo = 0;
+                else
+                    angulo = 90;
 
-            console.log(angulo)
             let img = document.querySelector(`#imagens #dobra${angulo}`);
             ctx.drawImage(img, j * this.celulaLargura, i * this.celulaAltura, this.celulaLargura, this.celulaAltura)            
         }
@@ -342,8 +305,6 @@ let desenhos = {
     }
 }
 
-
-// daqui pra frente as funcoes relacionadas estao relacionadas com o funcionamento e visualizacao do canvas;
 function anguloPelaDirecao(dir) {
     if (dir[0] == 0)
         if (dir[1] == 1) return 90; else return 270;
@@ -368,5 +329,5 @@ function atualizaCanvas() {
 
     desenhos.desenhaBunda();
     desenhos.desenhaCabeca();
-    // TODO: alguma coisa pra manter controle do combustivel. seria legal uma barra na direia que diminui com o tempo.
+    // TODO: alguma coisa pra manter controle do combustivel. seria legal uma barra na direita que diminui com o tempo.
 }
