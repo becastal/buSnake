@@ -18,8 +18,8 @@ let filaPessoas = 0;
 let combustivel = 0;
 let relogio = 0;
 let abastecimentos = 0;
-let skin = "metro"; // TODO: algum jeito de trocar de skin da cobra;
-// TODO: 
+let skin = "metro";
+// TODO: trocar alguns desses valores iniciais a partir de um menu inicial!
 
 document.addEventListener("keydown", logKey);
 
@@ -58,6 +58,9 @@ function inicioDeJogo()
     relogio = 0;
     abastecimentos = 0;
     
+    for (imagem of document.querySelectorAll("#skinCobra img"))
+        imagem.src = `./images/${skin}/${imagem.id}.png`;
+
     pessoas = [];
     for (let i = 0; i < MAX_PESSOAS; i++)
         pessoas.push(novoRandom()), pessoas[i].push(Math.floor(Math.random() * 10));
@@ -351,7 +354,7 @@ function fimDeJogo()
         mensagem = "voce nao pode se acertar!", fimId = 0;
     else if (estaContida(cabeca, pessoas)) 
         mensagem = "voce nao pode atropelar ninguem!", fimId = 1;
-    else if (combustivel < 0) 
+    else if (combustivel <= 0) 
         mensagem = "voce nao pode deixar o seu tanque acabar!", fimId = 2;
     else
         mensagem = "se mantenha dentro da cidade!", fimId = 3;
