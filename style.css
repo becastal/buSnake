@@ -1,15 +1,150 @@
+@font-face {
+    font-family: "Retro";
+    src: url(/font/retro.ttf);
+}
+
 * {
-    font-family: "Courier New", monospace;
+    font-family: "Retro", monospace;
 }
 
-#mapa {
-    white-space: pre;
+button {
+    all: unset;
 }
 
-#jogo {
+button:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#jogar {
+    width: 900px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#titulo {
+    width: 883px;
+    height: 50px;
+    text-align: center;
+    vertical-align: middle;
+    background-color: black;
+    color: white;
+    font-size: 2.5rem;
+}
+
+#base {
+    width: 883px;
+    height: 50px;
+    background-color: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: space-around;
+}
+
+canvas {
+    border: 1px solid black;
+}
+
+#tanque {
+    width: 80px;
+    height: 800px;
+    margin-left: -1px;
+    border: 1px solid black;
+}
+
+#medidor {
+    width: 80px;
+    height: 100%;
+    text-align: center;
+    position: relative;
+    background-color: yellow;
+}
+
+#fimDeJogo {
+    visibility: hidden;
+    position: absolute;
+    top: 25%;
+    left: 33%;
+    opacity: 90%;
+    width: 600px;
+    height: 300px;
+    background-color: red;
+    color: white;
+}
+
+#fimDeJogo #topo {
+    width: 100%;
+    height: 10%;
+    border-bottom: 1px solid white;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+#fimDeJogo #topo button {
+    margin-right: 2%;
+}
+
+#fimDeJogo #corpo {
+    width: 100%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#imgFim {
+    width: 100%;
+    height: 100%;
+}
+
+#fimDeJogo #corpo .texto{
+    height: 25%;
+    width: 100%;
+}
+
+#fimDeJogo #corpo .titulo {
+    font-size: 1.5rem;
+    font-weight: bold;
     text-align: center;
 }
 
-#canvas {
-    border: 1px solid black;
+#fimDeJogo #corpo .mensagem {
+    text-align: center;
+    text-decoration: underline;
 }
+
+#fimDeJogo #corpo .mais {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 75%;
+}
+
+#fimDeJogo #corpo .mais #imagemFim {
+    width: 50%;
+    height: 100%;
+}
+
+#fimDeJogo #corpo .mais #estatisticas {
+    width: 50%;
+    height: 100%;
+}
+
+#fimDeJogo #corpo .mais #estatisticas div {
+    margin-left: 10px;
+}
+
+#fimDeJogo #footer {
+    width: 100%;
+    height: 10%;
+    border-top: 1px solid white;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+

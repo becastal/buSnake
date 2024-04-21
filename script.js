@@ -1,12 +1,13 @@
-const MAX_ALTURA = 10;
-const MAX_LARGURA = 10;
+const MAX_ALTURA = 16;
+const MAX_LARGURA = 16;
 const MAX_PESSOAS = 3;
 const MAX_GASOLINAS = 1;
 const MAX_COMBUSTIVEL = 80;
 const VELOCIDADE = 200;
-const canvas = document.querySelector("#jogo canvas");
+const canvas = document.querySelector("canvas#jogo");
 const ctx = canvas.getContext("2d");
 let direcoes = [[-1, 0], [1, 0], [0, 1], [0, -1]];
+let compasso = { "-1,0":"[↑] norte", "1,0":"[↓] sul", "0,1":"[→] leste", "0,-1":"[←] oeste" };
 let mapa = [];
 let cabeca = [];
 let corpo = [];
@@ -15,8 +16,10 @@ let gasolinas = [];
 let direcao = [];
 let filaPessoas = 0;
 let combustivel = 0;
-let skin = "metro";
-
+let relogio = 0;
+let abastecimentos = 0;
+let skin = "metro"; // TODO: algum jeito de trocar de skin da cobra;
+// TODO: 
 
 document.addEventListener("keydown", logKey);
 
@@ -30,14 +33,18 @@ function logKey(e) {
         if (e.code == "ArrowLeft" || e.code == "KeyA") direcao = [0, -1];
         if (-direcaoAntiga[0] == direcao[0] && -direcaoAntiga[1] == direcao[1]) direcao = direcaoAntiga;
     }
+    else if (e.code = "KeyR")
+        if (acabouJogo()) inicioDeJogo();
+
 }
 
-preProcesso();
-function preProcesso() 
+inicioDeJogo();
+function inicioDeJogo() 
 {
     // void
     // constroe mapa e inicia valores fundamentais.
 
+    document.querySelector("#fimDeJogo").style.visibility = "hidden";
     for (let i = 0; i < MAX_ALTURA; i++) // eu odeio muito js olha que imbecilidade pra gerar uma matriz de tamanho [i][j]
     {
         mapa[i] = [];
@@ -48,10 +55,12 @@ function preProcesso()
     combustivel = MAX_COMBUSTIVEL;
     cabeca = [MAX_ALTURA / 2, MAX_LARGURA / 2];
     corpo = [ [MAX_ALTURA / 2 + 1, MAX_LARGURA / 2] ];
+    relogio = 0;
+    abastecimentos = 0;
     
     pessoas = [];
     for (let i = 0; i < MAX_PESSOAS; i++)
-        pessoas.push(novoRandom());
+        pessoas.push(novoRandom()), pessoas[i].push(Math.floor(Math.random() * 10));
     
     gasolinas = [];
     for (let i = 0; i < MAX_GASOLINAS; i++)
@@ -78,7 +87,6 @@ function atualiza()
 {
     // void
     // funcao que atualiza tudo que acontece em um so frame do jogo;
-
     cabeca[0] += direcao[0], cabeca[1] += direcao[1];                   // atualiza a posicao da cabeca
     let posAnterior = [cabeca[0] - direcao[0], cabeca[1] - direcao[1]]; // guarda a posicao anterior da cabeca
     if (acabouJogo()) return;
@@ -99,6 +107,7 @@ function atualiza()
     checaPessoa();   // checa e consome pessoas. 
     checaGasolina(); // checa e consome gasolina.
     atualizaCanvas();
+    relogio++;
 }
 
 function acabouJogo() 
@@ -106,25 +115,7 @@ function acabouJogo()
     // bool
     // retorna se o jogo acabou, ou por falta de gasolina ou por colisao da cabeca;
 
-    return combustivel < 0 || !posicaoValida();
-}
-
-function fimDeJogo() 
-{
-    let mensagem = "";
-    if (estaContida(cabeca, corpo)) 
-        mensagem = "voce nao pode se acertar!";
-
-    else if (estaContida(cabeca, pessoas)) 
-        mensagem = "voce nao pode atropelar ninguem!";
-
-    else if (combustivel < 0) 
-        mensagem = "voce nao pode deixar o seu tanque acabar!";
-
-    else
-        mensagem = "se mantenha dentro da cidade!"
-
-    console.log(`VOCE PERDEU: ${mensagem}`);
+    return combustivel <= 0 || !posicaoValida();
 }
 
 function novoRandom() 
@@ -199,6 +190,7 @@ function checaPessoa() {
             filaPessoas += 1;
             pessoas = removeDe(viz, pessoas)
             pessoas.push(novoRandom());
+            pessoas[pessoas.length - 1].push(Math.floor(Math.random() * 10));
         }
     }
 }
@@ -213,19 +205,37 @@ function checaGasolina() {
             combustivel = MAX_COMBUSTIVEL;
             gasolinas = removeDe(g, gasolinas);
             gasolinas.push(novoRandom());
+            abastecimentos++;
         }
-}
-
-// as tres funcoes daqui pra baixo servem pra ver o jogo em texto. so elas vao ter que ser alteradas pra funcionar em canvas ou divs.
-function figuraCorpo(i) {
-    
-    if (i == corpo.length - 1) return "b";
-    return("#");
 }
 
 let desenhos = {
     celulaAltura: canvas.height / MAX_ALTURA,
     celulaLargura: canvas.width / MAX_LARGURA,
+    
+    desenhaInformacoes: function () {
+        let medidor = document.querySelector("#medidor");
+        let medicao = (MAX_COMBUSTIVEL - combustivel) * (canvas.height / MAX_COMBUSTIVEL);
+        medidor.style.top = `${medicao}px`;
+        medidor.style.height = `${800 - medicao}px`;
+        medidor.innerHTML = `${combustivel}/${MAX_COMBUSTIVEL}`
+        document.querySelector("#tamanho").innerHTML = `tamanho: ${corpo.length + 1} pessoas.`;
+        document.querySelector("#relogio").innerHTML = `tempo de jogo: ${(relogio * VELOCIDADE / 1000).toFixed(2)} s.`;
+        document.querySelector("#abastecimentos").innerHTML = `abastecimentos: ${abastecimentos}.`;
+        let estadoTanque, corEstado;
+        if (combustivel >= 3/4*(MAX_COMBUSTIVEL))
+            estadoTanque = "otimo", corEstado = "darkgreen";
+        else if (combustivel >= 1/4*(MAX_COMBUSTIVEL))
+            estadoTanque = "decente", corEstado = "yellow";
+        else
+            estadoTanque = "ruim", corEstado = "red";
+        
+        document.querySelector("#estadoTanque span").innerHTML = estadoTanque;
+        document.querySelector("#estadoTanque span").style.color = corEstado;
+        document.querySelector("#medidor").style.backgroundColor = corEstado;
+        document.querySelector("#direcao").innerHTML = `direcao: ${compasso[direcao.toString()]}`;
+
+    },
     
     desenhaFundo: function (i, j) {
         ctx.beginPath();
@@ -237,9 +247,8 @@ let desenhos = {
         ctx.closePath();
     },
 
-    desenhaPessoa: function (i, j) {
-        // TODO: gerador aleatorio de pessoas, mas que mantem elas constantes. sei la.
-        let img = document.querySelector(`#imagens #pessoas1`);
+    desenhaPessoa: function (i, j, r) {
+        let img = document.querySelector(`#imagens #pessoas${r}`);
         ctx.drawImage(img, j * this.celulaLargura, i * this.celulaAltura, this.celulaLargura, this.celulaAltura);
     },
 
@@ -313,13 +322,16 @@ function anguloPelaDirecao(dir) {
 }  
 
 function atualizaCanvas() {
+    // void
+    // atualiza o canvas a partir dos valores das variaveis globais.
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (let i = 0; i < MAX_ALTURA; i++)
         for (let j = 0; j < MAX_LARGURA; j++)
             desenhos.desenhaFundo(i, j)
 
     for (p of pessoas)
-        desenhos.desenhaPessoa(p[0], p[1]);
+        desenhos.desenhaPessoa(p[0], p[1], p[2]); // o teceiro parametro (p[2]) eh a "skin" aleatoria da pessoa que foi gerada assim que o endereco da pessoa foi.
 
     for (g of gasolinas)    
         desenhos.desenhaGasolina(g[0], g[1]);
@@ -327,7 +339,43 @@ function atualizaCanvas() {
     for (let i = 0; i < corpo.length; i++)
         desenhos.desenhaCorpo(corpo[i][0], corpo[i][1], i);
 
+    desenhos.desenhaInformacoes();
     desenhos.desenhaBunda();
     desenhos.desenhaCabeca();
-    // TODO: alguma coisa pra manter controle do combustivel. seria legal uma barra na direita que diminui com o tempo.
+}
+
+function fimDeJogo() 
+{
+    let mensagem = "", fimId = 0;
+    if (estaContida(cabeca, corpo)) 
+        mensagem = "voce nao pode se acertar!", fimId = 0;
+    else if (estaContida(cabeca, pessoas)) 
+        mensagem = "voce nao pode atropelar ninguem!", fimId = 1;
+    else if (combustivel < 0) 
+        mensagem = "voce nao pode deixar o seu tanque acabar!", fimId = 2;
+    else
+        mensagem = "se mantenha dentro da cidade!", fimId = 3;
+
+    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    var data = imageData.data;
+    
+    // um pouco de magia rgb pra deixar tudo em preto e branco
+    for (var i = 0; i < data.length; i += 4) {
+        var grayscale = 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2]; // sinceramente sei la que numeros sao esses valeu GPT
+    
+        data[i] = grayscale;         // vermelho
+        data[i + 1] = grayscale;     // verde
+        data[i + 2] = grayscale;     // azul
+    }
+    ctx.putImageData(imageData, 0, 0);
+    document.querySelector("#medidor").style.backgroundColor = "grey";
+
+    fim = document.querySelector("#fimDeJogo");
+    fim.style.visibility = "visible";
+    fim.querySelector(".mensagem").textContent = mensagem;
+    fim.querySelector("#imgFim").src = `./images/fim/${fimId}.png`;
+    fim.querySelector(".tamanho").innerHTML = `tamanho: ${corpo.length + 1} pessoas.`;
+    fim.querySelector(".relogio").innerHTML = `tempo de jogo: ${(relogio * VELOCIDADE / 1000).toFixed(2)} s.`;
+    fim.querySelector(".abastecimentos").innerHTML = `abastecimentos: ${abastecimentos}.`;
+    console.log(`VOCE PERDEU: ${mensagem}`);
 }
