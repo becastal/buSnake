@@ -8,6 +8,7 @@ const canvas = document.querySelector("canvas#jogo");
 const ctx = canvas.getContext("2d");
 let direcoes = [[-1, 0], [1, 0], [0, 1], [0, -1]];
 let compasso = { "-1,0":"[↑] norte", "1,0":"[↓] sul", "0,1":"[→] leste", "0,-1":"[←] oeste" };
+let podeMudarDirecao = true;
 let mapa = [];
 let cabeca = [];
 let corpo = [];
@@ -26,12 +27,14 @@ document.addEventListener("keydown", logKey);
 function logKey(e) {
     if (["ArrowUp", "ArrowDown", "ArrowRight", "ArrowLeft", "KeyW", "KeyS", "KeyD", "KeyA"].includes(e.code))
     {
+        if (!podeMudarDirecao) return;
         direcaoAntiga = direcao;
         if (e.code == "ArrowUp" || e.code == "KeyW") direcao = [-1, 0];
         if (e.code == "ArrowDown" || e.code == "KeyS") direcao = [1, 0];
         if (e.code == "ArrowRight" || e.code == "KeyD") direcao = [0, 1];
         if (e.code == "ArrowLeft" || e.code == "KeyA") direcao = [0, -1];
         if (-direcaoAntiga[0] == direcao[0] && -direcaoAntiga[1] == direcao[1]) direcao = direcaoAntiga;
+        podeMudarDirecao = false;
     }
     else if (e.code = "KeyR")
         if (acabouJogo()) inicioDeJogo();
@@ -111,6 +114,7 @@ function atualiza()
     checaGasolina(); // checa e consome gasolina.
     atualizaCanvas();
     relogio++;
+    podeMudarDirecao = true;
 }
 
 function acabouJogo() 
@@ -213,10 +217,14 @@ function checaGasolina() {
 }
 
 let desenhos = {
+    // classe pras interacoes de desenho com o canvas.
+    // as atualizacoes dos valores em volta do canvas tambem estao majoritariamente aqui (o resto ta em fimDeJogo)
+
     celulaAltura: canvas.height / MAX_ALTURA,
     celulaLargura: canvas.width / MAX_LARGURA,
     
     desenhaInformacoes: function () {
+        // atualiza valores em volta do canvas;
         let medidor = document.querySelector("#medidor");
         let medicao = (MAX_COMBUSTIVEL - combustivel) * (canvas.height / MAX_COMBUSTIVEL);
         medidor.style.top = `${medicao}px`;
@@ -241,6 +249,7 @@ let desenhos = {
     },
     
     desenhaFundo: function (i, j) {
+        // pinta todo o fundo de branco com quadrados.
         ctx.beginPath();
         ctx.fillStyle = "white";
         ctx.fillRect(j * this.celulaLargura, i * this.celulaAltura, this.celulaLargura, this.celulaAltura);
@@ -251,6 +260,7 @@ let desenhos = {
     },
 
     desenhaPessoa: function (i, j, r) {
+        // desenha uma pessoa. r eh o valor gerado aleatoriamente quando a pessoa foi criada que indica qual imagem vai ser atribuida aquela pessoa.
         let img = document.querySelector(`#imagens #pessoas${r}`);
         ctx.drawImage(img, j * this.celulaLargura, i * this.celulaAltura, this.celulaLargura, this.celulaAltura);
     },
@@ -260,7 +270,9 @@ let desenhos = {
         ctx.drawImage(img, j * this.celulaLargura, i * this.celulaAltura, this.celulaLargura, this.celulaAltura);
     },
 
-    desenhaCabeca: function () {
+    desenhaBunda: function () {
+        // desenha a ultima parte do corpo com a orientacao necessaria.
+        // nao tao trivial saber a direcao da bunda, ja que ela segue a penultima parte do corpo (que pode ser a cabeca)
         let bunda = corpo[corpo.length - 1];
         let anterior = [0, 0];
         if (corpo.length == 1) 
@@ -274,7 +286,8 @@ let desenhos = {
     },
 
     desenhaCorpo: function (i, j, idx) {
-        if (idx == corpo.length - 1) return;
+        // desenha cada celula do corpo a partir da orientacao necessaria. eh preciso do idx aqui pra saber qual a posicao do corpo que antecede a atual e a que sucede.
+        if (idx == corpo.length - 1) return; // caso em que a unica parte do corpo eh a bunda (resolvido no desenhaBunda)
 
         let anterior = [0, 0];
         if (idx == 0)
@@ -286,12 +299,14 @@ let desenhos = {
 
         if (posterior[0] - anterior[0] == 0 || posterior[1] - anterior[1] == 0)
         {
+            // aqui lida com os casos em que o corpo tem que ser mostrado na horizontal ou vertical (se o anterior e o posterior tem a mesma linha ou mesma coluna)
             dir = [i - anterior[0] , j - anterior[1]]
             let img = document.querySelector(`#imagens #corpo${anguloPelaDirecao(dir)}`);
             ctx.drawImage(img, j * this.celulaLargura, i * this.celulaAltura, this.celulaLargura, this.celulaAltura)
         }
         else
         {
+            // aqui lida com os casos em que deve ser mostrada uma dobra. 
             pos = [posterior[0] - i, posterior[1] - j];
             ant = [anterior[0] - i, anterior[1] - j];
             let angulo = 0;
@@ -311,13 +326,17 @@ let desenhos = {
         }
     },
 
-    desenhaBunda: function () {
+    desenhaCabeca: function () {
+        // mais trivial dos desenhos. a cabeca segue sempre a direcao.
         let img = document.querySelector(`#imagens #cabeca${anguloPelaDirecao(direcao)}`);
         ctx.drawImage(img, cabeca[1] * this.celulaLargura, cabeca[0] * this.celulaAltura, this.celulaLargura, this.celulaAltura)
     }
 }
 
 function anguloPelaDirecao(dir) {
+    // int
+    // nao da pra fazer um dicionario de array -> int (como map<pair<int, int>, int> no c++) entao essa aqui eh uma solucao.
+
     if (dir[0] == 0)
         if (dir[1] == 1) return 90; else return 270;
     else
@@ -349,6 +368,9 @@ function atualizaCanvas() {
 
 function fimDeJogo() 
 {
+    // void
+    // funcao que anima o final do jogo;
+
     let mensagem = "", fimId = 0;
     if (estaContida(cabeca, corpo)) 
         mensagem = "voce nao pode se acertar!", fimId = 0;
