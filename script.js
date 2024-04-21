@@ -230,9 +230,9 @@ let desenhos = {
         medidor.style.top = `${medicao}px`;
         medidor.style.height = `${800 - medicao}px`;
         medidor.innerHTML = `${combustivel}/${MAX_COMBUSTIVEL}`
-        document.querySelector("#tamanho").innerHTML = `tamanho: ${corpo.length + 1} pessoas.`;
-        document.querySelector("#relogio").innerHTML = `tempo de jogo: ${(relogio * VELOCIDADE / 1000).toFixed(2)} s.`;
-        document.querySelector("#abastecimentos").innerHTML = `abastecimentos: ${abastecimentos}.`;
+        document.querySelector("#tamanho").innerHTML = `Tamanho: ${corpo.length + 1} pessoas.`;
+        document.querySelector("#relogio").innerHTML = `Tempo de jogo: ${(relogio * VELOCIDADE / 1000).toFixed(1)} s.`;
+        document.querySelector("#abastecimentos").innerHTML = `Abastecimentos: ${abastecimentos}.`;
         let estadoTanque, corEstado;
         if (combustivel >= 3/4*(MAX_COMBUSTIVEL))
             estadoTanque = "otimo", corEstado = "darkgreen";
@@ -244,7 +244,7 @@ let desenhos = {
         document.querySelector("#estadoTanque span").innerHTML = estadoTanque;
         document.querySelector("#estadoTanque span").style.color = corEstado;
         document.querySelector("#medidor").style.backgroundColor = corEstado;
-        document.querySelector("#direcao").innerHTML = `direcao: ${compasso[direcao.toString()]}`;
+        document.querySelector("#direcao").innerHTML = `Direção: ${compasso[direcao.toString()]}`;
 
     },
     
@@ -373,13 +373,13 @@ function fimDeJogo()
 
     let mensagem = "", fimId = 0;
     if (estaContida(cabeca, corpo)) 
-        mensagem = "voce nao pode se acertar!", fimId = 0;
+        mensagem = "Você bateu em si mesmo!", fimId = 0;
     else if (estaContida(cabeca, pessoas)) 
-        mensagem = "voce nao pode atropelar ninguem!", fimId = 1;
+        mensagem = "Você atropelou uma pessoa!", fimId = 1;
     else if (combustivel <= 0) 
-        mensagem = "voce nao pode deixar o seu tanque acabar!", fimId = 2;
+        mensagem = "Seu combustível se esgotou!", fimId = 2;
     else
-        mensagem = "se mantenha dentro da cidade!", fimId = 3;
+        mensagem = "Você saiu da cidade!", fimId = 3;
 
     var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     var data = imageData.data;
@@ -399,8 +399,8 @@ function fimDeJogo()
     fim.style.visibility = "visible";
     fim.querySelector(".mensagem").textContent = mensagem;
     fim.querySelector("#imgFim").src = `./images/fim/${fimId}.png`;
-    fim.querySelector(".tamanho").innerHTML = `tamanho: ${corpo.length + 1} pessoas.`;
-    fim.querySelector(".relogio").innerHTML = `tempo de jogo: ${(relogio * VELOCIDADE / 1000).toFixed(2)} s.`;
-    fim.querySelector(".abastecimentos").innerHTML = `abastecimentos: ${abastecimentos}.`;
-    console.log(`VOCE PERDEU: ${mensagem}`);
+    fim.querySelector(".tamanho").innerHTML = `Tamanho: ${corpo.length + 1} pessoas.`;
+    fim.querySelector(".relogio").innerHTML = `Tempo de jogo: ${(relogio * VELOCIDADE / 1000).toFixed(2)} s.`;
+    fim.querySelector(".abastecimentos").innerHTML = `Abastecimentos: ${abastecimentos}.`;
+    console.log(`Você perdeu: ${mensagem}`);
 }
