@@ -5,12 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>buSnake</title>
     <link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+    <link href="stylefront.css" rel="stylesheet">
 </head>
 <body>
+    <div id="header">
+        <div class="opcoes">
+            <!-- Jogar.html é a página do Jogo oficial -->
+            <!-- BERNARDO, ARTHUR, FERNANDO, KAIO -->
+            <p><a id="jogohtml" >Jogar</a></p>
+
+            <!-- Tutorial.html é a página do tutorial / explicações de como funciona o Jogo -->
+            <!-- KAIO / ??? -->
+            <p><a id="tutorial" >Tutorial</a></p>
+        </div>
+        <div class="opcoes">
+            <a id="buSnakeoptiona"><h1 id="buSnakeoption">buSnake</h1> </a>
+        </div>
+        <div class="opcoes">
+            <!-- Sobre.html é página explicando o Jogo e o que precisa sobre o trabalho -->
+            <!-- JOSÉ / GABRIEL -->
+            <p><a id="sobre" >Sobre</a></p>
+
+            <!-- Creditos.html é página mostrando os créditos dos integrantes do trabalho -->
+            <!-- JOSÉ / GABRIEL -->
+            <p><a id="creditos" >Créditos</a></p>
+        </div>
+    </div>
     <section id="jogar">
-        <div id="titulo">! buSnake !</div>
         <div id="imagens" hidden>
-            <img src="./images/gasolina.png" alt="" id="gasolina">
+            <img src="images/gasolina.png" alt="" id="gasolina">
             <img src="./images/pessoas/0.png" alt="" id="pessoas0">
             <img src="./images/pessoas/1.png" alt="" id="pessoas1">
             <img src="./images/pessoas/2.png" alt="" id="pessoas2">
@@ -49,19 +72,30 @@
             <div id="medidor"></div>
         </div>
         <div id="base">
-            <div id="tamanho">tamanho </div>
-            <div id="relogio">tempo de jogo</div>
-            <div id="abastecimentos">abastecimentos</div>
-            <div id="estadoTanque">estado tanque <span></span></div>
-            <div id="direcao">direcao: </div>
+            <div id="tamanho">Tamanho</div>
+            <div id="relogio">Tempo de jogo</div>
+            <div id="abastecimentos">Abastecimentos</div>
+            <div id="estadoTanque">Combustível: <span></span></div>
+            <div id="direcao">Direcao: </div>
         </div>
+<!--        ------------------------- REVISAR POSSIBILIDADE -->
+<!--        <div id="leaderboarddiv">-->
+<!--            <div id="leaderboardtext">Leaderboard</div>-->
+<!--            <div id="top1">Tamanho</div>-->
+<!--            <div id="top2">Tempo de jogo</div>-->
+<!--            <div id="top3">Abastecimentos</div>-->
+<!--            <div id="top4">Combustível: <span></span></div>-->
+<!--            <div id="top5">Direcao: </div>-->
+<!--            <div id="voce">Direcao: </div>-->
+<!--        </div>-->
+<!--        ------------------------- REVISAR POSSIBILIDADE -->
         <div id="fimDeJogo">
             <div id="topo">
                 <button id="fecha">X</button>
             </div>
             <div id="corpo">
                 <div class="texto">
-                    <div class="titulo">VOCE PERDEU!</div>
+                    <div class="titulo">Você perdeu!</div>
                     <div class="mensagem"></div>
                 </div>
                 <div class="mais">
@@ -69,17 +103,17 @@
                         <img id="imgFim" src="" alt="">
                     </div>
                     <div id="estatisticas">
-                        <div class="titulo">ESTATISTICAS</div>
-                        <div class="tamanho">tamanho: </div>
-                        <div class="relogio">tempo de jogo: </div>
-                        <div class="abastecimentos">abastecimentos: </div>
+                        <div class="titulo">Estatísticas</div>
+                        <div class="tamanho">Tamanho: </div>
+                        <div class="relogio">Tempo de jogo: </div>
+                        <div class="abastecimentos">Abastecimentos: </div>
                     </div>
                 </div>
             </div>
             <div id="footer">
-                <button class="fecha">menu [M]</button>
-                <button class="fecha">configuracoes [C]</button>
-                <button class="fecha">reiniciar [R]</button>
+                <button class="fecha">Menu [M]</button>
+                <button class="fecha">Configurações [C]</button>
+                <button class="fecha">Reiniciar [R]</button>
             </div>
         </div>
     </section>

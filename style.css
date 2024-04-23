@@ -1,6 +1,6 @@
 @font-face {
     font-family: "Retro";
-    src: url(/font/retro.ttf);
+    src: url(./font/retro.ttf);
 }
 
 * {
@@ -36,14 +36,24 @@ button:hover {
 }
 
 #base {
-    width: 883px;
-    height: 50px;
-    background-color: black;
-    color: white;
+    position: fixed;
+    left: 150px;
+    width: 350px;
+    height: 300px;
+    top: 475px;
+
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    align-content: space-around;
+    align-content: center;
+    justify-content: center;
+
+    background-color: darkslategray;
+    color: white;
+}
+#base div{
+    padding-bottom: 20px;
+    font-size: 25px;
 }
 
 canvas {
@@ -55,6 +65,7 @@ canvas {
     height: 800px;
     margin-left: -1px;
     border: 1px solid black;
+    background-color: dimgray;
 }
 
 #medidor {
