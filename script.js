@@ -1,3 +1,5 @@
+console.log('aaaaaa') , { willReadFrequently: true }
+
 const MAX_ALTURA = 16;
 const MAX_LARGURA = 16;
 const MAX_PESSOAS = 3;
@@ -5,9 +7,9 @@ const MAX_GASOLINAS = 1;
 const MAX_COMBUSTIVEL = 80;
 const VELOCIDADE = 200;
 const canvas = document.querySelector("canvas#jogo");
-const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d", { willReadFrequently: true });
 let direcoes = [[-1, 0], [1, 0], [0, 1], [0, -1]];
-let compasso = { "-1,0":"[↑] norte", "1,0":"[↓] sul", "0,1":"[→] leste", "0,-1":"[←] oeste" };
+let compasso = { "-1,0":"[↑] Norte", "1,0":"[↓] Sul", "0,1":"[→] Leste", "0,-1":"[←] Oeste" };
 let podeMudarDirecao = true;
 let mapa = [];
 let cabeca = [];
@@ -77,7 +79,7 @@ function inicioDeJogo()
 
 function rodar() {
     // void
-    // funcao recursiva que permite o jogo ir se atualizando.
+    // funcao recursiva que permite o Jogo ir se atualizando.
 
     setTimeout(function () 
     {
@@ -92,7 +94,7 @@ function rodar() {
 function atualiza() 
 {
     // void
-    // funcao que atualiza tudo que acontece em um so frame do jogo;
+    // funcao que atualiza tudo que acontece em um so frame do Jogo;
     cabeca[0] += direcao[0], cabeca[1] += direcao[1];                   // atualiza a posicao da cabeca
     let posAnterior = [cabeca[0] - direcao[0], cabeca[1] - direcao[1]]; // guarda a posicao anterior da cabeca
     if (acabouJogo()) return;
@@ -120,7 +122,7 @@ function atualiza()
 function acabouJogo() 
 {
     // bool
-    // retorna se o jogo acabou, ou por falta de gasolina ou por colisao da cabeca;
+    // retorna se o Jogo acabou, ou por falta de gasolina ou por colisao da cabeca;
 
     return combustivel <= 0 || !posicaoValida();
 }
@@ -147,7 +149,7 @@ function novoRandom()
 function posicaoValida()
 {
     // bool
-    // retorna se a posicao da cabeca esta dentro do jogo, se nao acabou de atroplar um pessoas e se nao acabou de passar por dentro do proprio corpo;
+    // retorna se a posicao da cabeca esta dentro do Jogo, se nao acabou de atroplar um pessoas e se nao acabou de passar por dentro do proprio corpo;
 
     let x = cabeca[0]; 
     let y = cabeca[1];
@@ -230,16 +232,16 @@ let desenhos = {
         medidor.style.top = `${medicao}px`;
         medidor.style.height = `${800 - medicao}px`;
         medidor.innerHTML = `${combustivel}/${MAX_COMBUSTIVEL}`
-        document.querySelector("#tamanho").innerHTML = `Tamanho: ${corpo.length + 1} pessoas.`;
-        document.querySelector("#relogio").innerHTML = `Tempo de jogo: ${(relogio * VELOCIDADE / 1000).toFixed(1)} s.`;
-        document.querySelector("#abastecimentos").innerHTML = `Abastecimentos: ${abastecimentos}.`;
+        document.querySelector("#tamanho").innerHTML = `Tamanho: ${corpo.length + 1} pessoas`;
+        document.querySelector("#relogio").innerHTML = `Tempo de jogo: ${(relogio * VELOCIDADE / 1000).toFixed(1)} s`;
+        document.querySelector("#abastecimentos").innerHTML = `Abastecimentos: ${abastecimentos}`;
         let estadoTanque, corEstado;
         if (combustivel >= 3/4*(MAX_COMBUSTIVEL))
-            estadoTanque = "otimo", corEstado = "darkgreen";
+            estadoTanque = "Cheio", corEstado = "green";
         else if (combustivel >= 1/4*(MAX_COMBUSTIVEL))
-            estadoTanque = "decente", corEstado = "yellow";
+            estadoTanque = "Metade", corEstado = "yellow";
         else
-            estadoTanque = "ruim", corEstado = "red";
+            estadoTanque = "Baixo", corEstado = "red";
         
         document.querySelector("#estadoTanque span").innerHTML = estadoTanque;
         document.querySelector("#estadoTanque span").style.color = corEstado;
@@ -369,7 +371,7 @@ function atualizaCanvas() {
 function fimDeJogo() 
 {
     // void
-    // funcao que anima o final do jogo;
+    // funcao que anima o final do Jogo;
 
     let mensagem = "", fimId = 0;
     if (estaContida(cabeca, corpo)) 
@@ -395,7 +397,7 @@ function fimDeJogo()
     ctx.putImageData(imageData, 0, 0);
     document.querySelector("#medidor").style.backgroundColor = "grey";
 
-    fim = document.querySelector("#fimDeJogo");
+    let fim = document.querySelector("#fimDeJogo");
     fim.style.visibility = "visible";
     fim.querySelector(".mensagem").textContent = mensagem;
     fim.querySelector("#imgFim").src = `./images/fim/${fimId}.png`;
