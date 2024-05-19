@@ -149,3 +149,15 @@ a:before{
     color: #e7f7f7;
     border: black 5px double;
 }
+
+#integrantes td {
+    border: black 1px solid;
+}
+
+#integrantes tr :nth-child(2) {
+    text-align: left;
+}
+
+#integrantes tr :nth-child(1) p {
+    color: black;
+}

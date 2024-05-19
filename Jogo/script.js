@@ -20,13 +20,16 @@ let combustivel = 0;
 let relogio = 0;
 let abastecimentos = 0;
 let skin = "metro";
-// TODO: trocar alguns desses valores iniciais a partir de um menu inicial!
 
 document.addEventListener("keydown", logKey);
+document.querySelector("#fecha").addEventListener("click", function() { inicioDeJogo() });
+document.querySelector("#reiniciar").addEventListener("click", function() { inicioDeJogo() });
+document.querySelector("#voltarMenu").addEventListener("click", function() { window.location.href = "../Home/index.html" });
 
 function logKey(e) {
     if (["ArrowUp", "ArrowDown", "ArrowRight", "ArrowLeft", "KeyW", "KeyS", "KeyD", "KeyA"].includes(e.code))
     {
+        e.preventDefault();
         if (!podeMudarDirecao) return;
         let direcaoAntiga = direcao;
         if (e.code == "ArrowUp" || e.code == "KeyW") direcao = [-1, 0];
@@ -36,9 +39,6 @@ function logKey(e) {
         if (-direcaoAntiga[0] == direcao[0] && -direcaoAntiga[1] == direcao[1]) direcao = direcaoAntiga;
         podeMudarDirecao = false;
     }
-    else if (e.code = "KeyR")
-        if (acabouJogo()) inicioDeJogo();
-
 }
 
 inicioDeJogo();
@@ -48,7 +48,7 @@ function inicioDeJogo()
     // constroe mapa e inicia valores fundamentais.
 
     document.querySelector("#fimDeJogo").style.visibility = "hidden";
-    for (let i = 0; i < MAX_ALTURA; i++) // eu odeio muito js olha que imbecilidade pra gerar uma matriz de tamanho [i][j]
+    for (let i = 0; i < MAX_ALTURA; i++)  
     {
         mapa[i] = [];
         for (let j = 0; j < MAX_LARGURA; j++)
@@ -128,7 +128,7 @@ function acabouJogo()
 function novoRandom() 
 {
     // array (par de posicao [x, y])
-    // funcao meio burra pra gerar uma posicao aleatoria nao ocupada;
+    // funcao para gerar uma nova posicao aleatoria que nao esta ocupada
     //   o outro jeito eh ter uma array de todas as posicoes possiveis e pegar uma posicao aleatoria dentro dessa array. mas isso eh O(max_altura * max_largura)
     //   pra gerar essa array e testar dentro dela necessariamente. desse jeito aqui agora eh O(sorte) o que eh BEM mais daora;
     // mas vale dizer que tambem existe um mundo em que eh impossivel sair dessa funcao. podemos estar vivendo nele ou nao. nao sei;
@@ -147,7 +147,7 @@ function novoRandom()
 function posicaoValida()
 {
     // bool
-    // retorna se a posicao da cabeca esta dentro do Jogo, se nao acabou de atroplar um pessoas e se nao acabou de passar por dentro do proprio corpo;
+    // retorna se a posicao da cabeca esta dentro do Jogo, se nao acabou de atroplar as pessoas e se nao acabou de passar por dentro do proprio corpo;
 
     let x = cabeca[0]; 
     let y = cabeca[1];
@@ -158,7 +158,7 @@ function estaContida(oque, onde) {
     // bool
     // o .includes() normal do js nao consegue checar se uma array ta contida em outra array, ele sempre retorna falso;
     // como eu regularmente preciso testar isso com as arrays de posicao (pares), essa funcao testa so pra pares de valores.
-    // nao sei fazer isso no js com complexidade melhor que O(n) entao fodase;
+    // nao sei fazer isso no js com complexidade melhor que O(n);
 
     for (par of onde)
         if (par[0] == oque[0] && par[1] == oque[1]) return true;
@@ -169,7 +169,6 @@ function estaContida(oque, onde) {
 function removeDe(oque, onde) {
     // array (array de par de posicao [x, y])
     // ter que fazer uma funcao pra isso tem a mesma razao do porque da funcao estaContida(). nao sei como passar parametro por referencia em js entao acho que isso
-    // aqui ta meio burro mas fodase. 
 
     let resp = [];
     for (par of onde)
@@ -181,7 +180,7 @@ function removeDe(oque, onde) {
 function checaPessoa() {
     // void
     // testa se nas duas casas nas laterais da cabeca tem pessoas;
-    // adiciona um no contador de pessoas (a variavel global filaPessoas). o contador eh lidado na funcao de atualizar no proximo frame;
+    // adiciona um no contador de pessoas (a variavel global filaPessoas). o contador eh lidado na funcao de atualiza no proximo frame;
     // gera novas pessoas;
 
     let vizinhos = [];
@@ -371,7 +370,7 @@ function fimDeJogo()
     // void
     // funcao que anima o final do Jogo;
 
-    let mensagem = "";
+    let mensagem = "", imgFim = "";
     if (estaContida(cabeca, corpo))
         mensagem = "Você bateu em si mesmo!";
     else if (estaContida(cabeca, pessoas))
@@ -386,7 +385,7 @@ function fimDeJogo()
     
     // um pouco de magia rgb pra deixar tudo em preto e branco
     for (var i = 0; i < data.length; i += 4) {
-        var grayscale = 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2]; // sinceramente sei la que numeros sao esses valeu GPT
+        var grayscale = 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
     
         data[i] = grayscale;         // vermelho
         data[i + 1] = grayscale;     // verde
@@ -398,9 +397,29 @@ function fimDeJogo()
     let fim = document.querySelector("#fimDeJogo");
     fim.style.visibility = "visible";
     fim.querySelector(".mensagem").textContent = mensagem;
-    fim.querySelector("#imgFim").src = `./images/fim/fim.png`;
+    fim.querySelector("#imgFim").src = "./images/fim/fim.png";
     fim.querySelector(".tamanho").innerHTML = `Tamanho: ${corpo.length + 1} pessoas.`;
     fim.querySelector(".relogio").innerHTML = `Tempo de jogo: ${(relogio * VELOCIDADE / 1000).toFixed(2)} s.`;
     fim.querySelector(".abastecimentos").innerHTML = `Abastecimentos: ${abastecimentos}.`;
-    console.log(`Você perdeu: ${mensagem}`);
+
+    let tituloLucro = "", mensagemLucro = "", conteudoLucro = "", imgLucro = "";
+    if (abastecimentos == 0 || (corpo.length + 1) / abastecimentos >= 5)
+    {
+        tituloLucro = "Você lucrou!";
+        mensagemLucro = "Seu emprego foi mantido!";
+        conteudoLucro = "você foi eficiente com o combustíel!\n A sua contratante ainda quer os seus serviços!.";
+        imgLucro = "./images/fim/lucrou.png";
+    }
+    else
+    {
+        tituloLucro = "Você NÃO lucrou!";
+        mensagemLucro = "Você foi despedido!";
+        conteudoLucro = "você não foi eficiente com o combustíel, gerando alta despesa!\n A sua contratante não precisa mais de você.";
+        imgLucro = "./images/fim/faliu.png";
+    }
+
+    fim.querySelector("#lucro .titulo").textContent = tituloLucro;
+    fim.querySelector("#lucro .mensagem").textContent = mensagemLucro;
+    fim.querySelector("#lucro .conteudo").textContent = conteudoLucro;
+    fim.querySelector("#lucro #imgLucro").src = imgLucro;
 }
