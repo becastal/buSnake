@@ -1,0 +1,151 @@
+@font-face {
+    font-family: "Retro";
+    src: url(../Jogo/font/retro.ttf);
+}
+* {
+    font-family: "Retro", monospace;
+    pointer-events: bounding-box;
+}
+
+
+body {
+     /*Para inserir a imagem de fundo basta alterar a imagem abaixo:*/
+    background-image: url(../images_menu/menu.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin: 0;
+}
+/* -------------------------- Centralizar o menu das opções via flexbox -------------------------- */
+#flexmenu{
+    display: flex;
+    justify-content: center;
+    margin-top: 533px;
+}
+/* --------------------------  Menu -------------------------- */
+#menuopcoes{
+
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: center;
+    width: auto;
+}
+/* -------------------------- Opções -------------------------- */
+.opcoes{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-self: center;
+}
+
+#buSnakeoption{
+    font-size: 100px;
+    margin: 0px;
+}
+#buSnakeoptiona{
+    border: none;
+    font-size: 100px;
+    margin: 0px;
+    background-color: transparent;
+}
+a{
+    text-decoration: none;
+    color: #363b3b;
+    font-size: 50px;
+    font-weight: bolder;
+    opacity: 100%;
+
+
+    transition: ease-out 0.26s;
+    padding: 5px;
+    border: #707070 5px solid;
+    border-radius: 100px;
+    background-color: gray;
+}
+a:hover{
+    color: #e7f7f7;
+}
+a:before{
+    transition: 0.52s all ease;
+    opacity: 0;
+    content: "";
+    background-color: darkslategray;
+}
+
+.opcoes p{
+    margin: 0px 20px 00px 20px;
+    opacity: 94%;
+}
+
+#botaobusnake{
+    width: 353px;
+    height: 127px;
+
+    border: none;
+    padding: 0;
+    border-radius: 0;
+    background-color: transparent;
+    background-image: url("../images_menu/botao_busnake_preto.png");
+}
+
+#botaobusnake:hover{
+    background-image: url("../images_menu/botao_busnake_branco.png");
+}
+
+/* --------------------------  Páginas de texto -------------------------- */
+
+#flexsobre{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+
+    padding-top: 180px;
+}
+#flextutorial{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+
+    padding-top: 150px;
+}
+.textos{
+    margin-right: 20%;
+    margin-left: 20%;
+
+    text-align: justify;
+    background-color: #4e4e4e;
+    color: #e7f7f7;
+    border: black 5px double;
+}
+.textos p{
+    margin-right: 5%;
+    margin-left: 5%;
+
+    font-size: 20px;
+}
+.textos h1{
+    text-align: center;
+}
+#tutorial{
+    margin-right: 5%;
+    margin-left: 5%;
+
+    text-align: justify;
+}
+
+#flexintegrantes{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+
+    padding-top: 150px;
+}
+
+#integrantes{
+    margin-right: 20%;
+    margin-left: 20%;
+
+    background-color: #4e4e4e;
+    color: #e7f7f7;
+    border: black 5px double;
+}
