@@ -407,7 +407,7 @@ function fimDeJogo()
     {
         tituloLucro = "Você lucrou!";
         mensagemLucro = "Seu emprego foi mantido!";
-        conteudoLucro = "você foi eficiente com o combustíel!\n A sua contratante ainda quer os seus serviços!.";
+        conteudoLucro = "Você foi eficiente com o combustíel!\n A sua contratante ainda quer os seus serviços!.";
         imgLucro = "./images/fim/lucrou.png";
     }
     else
